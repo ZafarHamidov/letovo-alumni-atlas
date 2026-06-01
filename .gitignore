@@ -1,0 +1,9 @@
+# Publish only the static GitHub Pages site.
+*
+
+!.gitignore
+!index.html
+!assets/
+!assets/demo-alumni-photo.png
+!assets/letovo-logo-official.svg
+!assets/letovo-pattern.png

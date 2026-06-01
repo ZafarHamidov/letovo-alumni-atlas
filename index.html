@@ -1,0 +1,2222 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Letovo Alumni Atlas | Profiles Explorer</title>
+  <meta name="description" content="Searchable bilingual profiles explorer for Letovo alumni stories, universities, scholarships, projects, essays, and advice." />
+  <style>
+    :root {
+      --blue: #123274;
+      --blue-2: #0d3174;
+      --yellow: #fdc300;
+      --turquoise: #00adb9;
+      --red: #a40c30;
+      --light-blue: #d2e2f2;
+      --gray: #b2b2b2;
+      --ink: #1d1d1b;
+      --muted: #59606f;
+      --line: #d8dde8;
+      --panel: #ffffff;
+      --soft: #f3f6fb;
+      --radius: 8px;
+      --shadow: 0 18px 42px rgba(13, 49, 116, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #eef3fa;
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(13, 49, 116, 0.08), rgba(13, 49, 116, 0) 440px),
+        #eef3fa;
+    }
+
+    .wrap {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid rgba(13, 49, 116, 0.12);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      flex: 1 1 auto;
+      min-width: 0;
+      gap: 12px;
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 112px;
+      height: auto;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-title {
+      display: block;
+      color: var(--blue);
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-subtitle {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 360px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+
+    .segmented {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid rgba(13, 49, 116, 0.18);
+      border-radius: 8px;
+      background: #fff;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .segmented button {
+      width: 44px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .segmented button.active {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .link-button,
+    .primary-button,
+    .secondary-button,
+    .icon-button {
+      min-height: 38px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 0 14px;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .primary-button {
+      background: var(--yellow);
+      color: var(--blue);
+      border-color: #e5b000;
+    }
+
+    .secondary-button {
+      background: #fff;
+      color: var(--blue);
+      border-color: rgba(13, 49, 116, 0.2);
+    }
+
+    .icon-button {
+      width: 38px;
+      padding: 0;
+      background: #fff;
+      color: var(--blue);
+      border-color: rgba(13, 49, 116, 0.2);
+    }
+
+    .link-button:hover,
+    .primary-button:hover,
+    .secondary-button:hover,
+    .icon-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .hidden-link {
+      display: none !important;
+    }
+
+    .hero {
+      color: #fff;
+      background:
+        linear-gradient(90deg, rgba(13, 49, 116, 0.96), rgba(13, 49, 116, 0.9)),
+        url("assets/letovo-pattern.png") center / cover no-repeat;
+      border-bottom: 6px solid var(--yellow);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      gap: 28px;
+      align-items: end;
+      padding: 38px 0 32px;
+    }
+
+    .hero-inner > * {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 3px;
+      background: var(--yellow);
+      border-radius: 99px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(34px, 6vw, 72px);
+      line-height: 1.02;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 16px 0 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 17px;
+    }
+
+    .hero-panel {
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--ink);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .search-label {
+      display: block;
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 48px;
+      border: 2px solid rgba(13, 49, 116, 0.18);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      outline: 0;
+      padding: 0 44px 0 14px;
+      font-size: 16px;
+    }
+
+    .search-box input:focus {
+      border-color: var(--turquoise);
+      box-shadow: 0 0 0 4px rgba(0, 173, 185, 0.16);
+    }
+
+    .search-symbol {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      width: 20px;
+      height: 20px;
+      transform: translateY(-50%);
+      color: var(--blue);
+      pointer-events: none;
+    }
+
+    .quick-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .quick-chip {
+      border: 1px solid rgba(13, 49, 116, 0.18);
+      border-radius: 999px;
+      background: #f7f9fd;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 9px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1px;
+      background: rgba(13, 49, 116, 0.12);
+      border: 1px solid rgba(13, 49, 116, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 18px auto 0;
+    }
+
+    .stat {
+      min-height: 80px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .stat-value {
+      display: block;
+      color: var(--blue);
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 18px;
+      padding: 20px 0 54px;
+      align-items: start;
+    }
+
+    .filters {
+      position: sticky;
+      top: 84px;
+      background: var(--panel);
+      border: 1px solid rgba(13, 49, 116, 0.12);
+      border-radius: 8px;
+      box-shadow: 0 12px 28px rgba(13, 49, 116, 0.08);
+      padding: 14px;
+    }
+
+    .filters-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .filters-title {
+      margin: 0;
+      color: var(--blue);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .active-count {
+      min-width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--red);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .field {
+      margin: 12px 0;
+    }
+
+    .field label,
+    .check-row > span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    select {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid rgba(13, 49, 116, 0.2);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      outline: 0;
+      padding: 0 10px;
+    }
+
+    select:focus {
+      border-color: var(--turquoise);
+      box-shadow: 0 0 0 3px rgba(0, 173, 185, 0.15);
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .check-list label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 34px;
+      border: 1px solid rgba(13, 49, 116, 0.14);
+      border-radius: 8px;
+      background: #f8fafd;
+      padding: 7px 8px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: none;
+    }
+
+    .check-list input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--blue);
+      flex: 0 0 auto;
+    }
+
+    .reset-button {
+      width: 100%;
+      min-height: 40px;
+      margin-top: 12px;
+      border: 1px solid rgba(13, 49, 116, 0.2);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .filters-close {
+      display: none;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .results-toolbar {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.74);
+      border: 1px solid rgba(13, 49, 116, 0.12);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .results-title {
+      margin: 0;
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .results-note {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mobile-filter-button {
+      display: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .profile-card {
+      background: #fff;
+      border: 1px solid rgba(13, 49, 116, 0.13);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(13, 49, 116, 0.09);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .card-media {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      background:
+        linear-gradient(135deg, rgba(13, 49, 116, 0.95), rgba(9, 38, 93, 0.95)),
+        url("assets/letovo-pattern.png") center / cover no-repeat;
+      color: #fff;
+    }
+
+    .avatar {
+      width: 82px;
+      height: 82px;
+      border: 3px solid var(--yellow);
+      border-radius: 8px;
+      background: var(--blue-2);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .avatar img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: var(--blue-2);
+    }
+
+    .avatar-fallback {
+      color: var(--yellow);
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .card-person {
+      min-width: 0;
+    }
+
+    .card-person h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.16;
+      font-weight: 900;
+      color: #fff;
+      word-break: break-word;
+    }
+
+    .meta-line {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      flex: 1;
+    }
+
+    .fact-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .fact {
+      min-height: 42px;
+      border-left: 4px solid var(--turquoise);
+      background: #f6f9fd;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .fact strong {
+      display: block;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .fact span {
+      display: block;
+      margin-top: 2px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .advice {
+      color: var(--ink);
+      font-size: 14px;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .tag {
+      border: 1px solid rgba(13, 49, 116, 0.16);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 8px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-footer {
+      padding: 0 14px 14px;
+    }
+
+    .read-button {
+      width: 100%;
+      min-height: 40px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .state-card {
+      background: #fff;
+      border: 1px solid rgba(13, 49, 116, 0.14);
+      border-radius: 8px;
+      box-shadow: 0 12px 28px rgba(13, 49, 116, 0.08);
+      padding: 22px;
+    }
+
+    .state-card h2 {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 900;
+    }
+
+    .state-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 15px;
+      overflow-wrap: anywhere;
+    }
+
+    .schema-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .schema-pill {
+      border-radius: 999px;
+      background: #eef3fa;
+      border: 1px solid rgba(13, 49, 116, 0.14);
+      color: var(--blue);
+      font-family: Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      padding: 6px 8px;
+    }
+
+    .profile-detail {
+      display: none;
+      padding: 20px 0 54px;
+    }
+
+    .profile-detail.active {
+      display: block;
+    }
+
+    .detail-hero {
+      background:
+        linear-gradient(90deg, rgba(13, 49, 116, 0.98), rgba(9, 38, 93, 0.94)),
+        url("assets/letovo-pattern.png") center / cover no-repeat;
+      color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      border-bottom: 6px solid var(--yellow);
+      box-shadow: var(--shadow);
+    }
+
+    .detail-hero-inner {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 18px;
+      align-items: center;
+      padding: 22px;
+    }
+
+    .detail-avatar {
+      width: 132px;
+      height: 132px;
+      border-width: 4px;
+    }
+
+    .detail-heading {
+      min-width: 0;
+    }
+
+    .detail-heading h1 {
+      font-size: clamp(30px, 5vw, 58px);
+      overflow-wrap: anywhere;
+    }
+
+    .detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .detail-chip {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 7px 10px;
+    }
+
+    .back-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .detail-sections {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-section,
+    .detail-aside {
+      background: #fff;
+      border: 1px solid rgba(13, 49, 116, 0.12);
+      border-radius: 8px;
+      box-shadow: 0 12px 26px rgba(13, 49, 116, 0.08);
+      padding: 18px;
+    }
+
+    .detail-section h2,
+    .detail-aside h2 {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .detail-section p,
+    .detail-section li,
+    .detail-aside p,
+    .detail-aside li {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .detail-section p,
+    .detail-aside p {
+      margin: 0;
+      white-space: pre-line;
+    }
+
+    .bullet-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .side-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .side-list li {
+      border-left: 4px solid var(--yellow);
+      background: #f7f9fd;
+      border-radius: 6px;
+      padding: 9px 10px;
+    }
+
+    .side-list strong {
+      display: block;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .side-list span,
+    .side-list a {
+      display: block;
+      margin-top: 2px;
+      color: var(--ink);
+      overflow-wrap: anywhere;
+    }
+
+    .link-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .external-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      border: 1px solid rgba(13, 49, 116, 0.16);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 0 10px;
+    }
+
+    .loading-line {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #dfe8f6, #fff, #dfe8f6);
+      background-size: 220% 100%;
+      animation: shimmer 1.2s linear infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 220% 0; }
+      to { background-position: -220% 0; }
+    }
+
+    @media (max-width: 1100px) {
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner,
+      .main-grid,
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-inner {
+        align-items: start;
+        padding: 30px 0 24px;
+      }
+
+      .hero-panel {
+        width: 100%;
+        max-width: calc(100vw - 24px);
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stat:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .filters {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        top: auto;
+        z-index: 80;
+        max-height: min(78vh, 680px);
+        overflow: auto;
+        transform: translateY(calc(100% + 20px));
+        transition: transform 0.2s ease;
+      }
+
+      .filters.open {
+        transform: translateY(0);
+      }
+
+      .mobile-filter-button {
+        display: inline-flex;
+      }
+
+      .filters-close {
+        display: inline-flex;
+      }
+
+      .detail-aside {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .wrap {
+        width: min(100% - 24px, 1240px);
+      }
+
+      .topbar-inner {
+        min-height: auto;
+        padding: 8px 0;
+        flex-wrap: wrap;
+      }
+
+      .brand-subtitle,
+      .top-actions .secondary-button {
+        display: none;
+      }
+
+      .brand-title {
+        font-size: 13px;
+        max-width: 128px;
+      }
+
+      .brand {
+        flex: 1 1 0;
+        gap: 8px;
+        max-width: 100%;
+      }
+
+      .top-actions {
+        gap: 6px;
+        width: 100%;
+        min-width: 0;
+        margin-left: 46px;
+        justify-content: flex-start;
+      }
+
+      .segmented {
+        gap: 2px;
+        padding: 2px;
+      }
+
+      .segmented button {
+        width: 34px;
+      }
+
+      h1 {
+        font-size: 36px;
+      }
+
+      .hero p {
+        font-size: 15px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .results-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .detail-hero-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-avatar {
+        width: 112px;
+        height: 112px;
+      }
+
+      .card-media {
+        grid-template-columns: 72px minmax(0, 1fr);
+      }
+
+      .avatar {
+        width: 72px;
+        height: 72px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <a class="brand" href="#" id="homeLink" aria-label="Letovo Alumni Atlas">
+          <img class="brand-logo" src="assets/letovo-logo-official.svg" alt="Letovo School" />
+          <span class="brand-text">
+            <span class="brand-title">Alumni Atlas</span>
+            <span class="brand-subtitle" data-i18n="brandSubtitle">Атлас траекторий выпускников</span>
+          </span>
+        </a>
+        <div class="top-actions">
+          <a class="secondary-button hidden-link" id="contactLink" href="#" target="_blank" rel="noopener" data-i18n="contact">Контакт</a>
+          <a class="primary-button hidden-link" id="formLink" href="#" target="_blank" rel="noopener" data-i18n="submitStory">Добавить историю</a>
+          <div class="segmented" aria-label="Language">
+            <button type="button" data-lang="ru" class="active">RU</button>
+            <button type="button" data-lang="en">EN</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="explorerView">
+      <section class="hero">
+        <div class="wrap hero-inner">
+          <div>
+            <div class="eyebrow" data-i18n="eyebrow">Профили выпускников</div>
+            <h1 data-i18n="heroTitle">Атлас выпускников Летово</h1>
+            <p data-i18n="heroText">Ищите реальные траектории: университеты, офферы, стипендии, проекты, эссе, привычки и советы выпускников.</p>
+          </div>
+          <div class="hero-panel">
+            <label class="search-label" for="searchInput" data-i18n="searchLabel">Поиск по профилям</label>
+            <div class="search-box">
+              <input id="searchInput" type="search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Университет, major, проект, страна, совет" />
+              <svg class="search-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m20 20-3.5-3.5"></path>
+              </svg>
+            </div>
+            <div class="quick-row" id="quickChips" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap" aria-label="Statistics">
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-value" id="statProfiles">0</span>
+            <span class="stat-label" data-i18n="statProfiles">профилей</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statUniversities">0</span>
+            <span class="stat-label" data-i18n="statUniversities">университетов</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statCountries">0</span>
+            <span class="stat-label" data-i18n="statCountries">стран</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statScholarships">0</span>
+            <span class="stat-label" data-i18n="statScholarships">стипендий</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="statMentors">0</span>
+            <span class="stat-label" data-i18n="statMentors">готовы помочь</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap main-grid">
+        <aside class="filters" id="filtersPanel">
+          <div class="filters-head">
+            <h2 class="filters-title" data-i18n="filters">Фильтры</h2>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="active-count" id="activeFilterCount">0</span>
+              <button class="icon-button filters-close" type="button" id="closeFilters" aria-label="Close filters">×</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="universityFilter" data-i18n="filterUniversity">Университет</label>
+            <select id="universityFilter"></select>
+          </div>
+          <div class="field">
+            <label for="countryFilter" data-i18n="filterCountry">Страна</label>
+            <select id="countryFilter"></select>
+          </div>
+          <div class="field">
+            <label for="yearFilter" data-i18n="filterYear">Год выпуска</label>
+            <select id="yearFilter"></select>
+          </div>
+          <div class="field">
+            <label for="majorFilter" data-i18n="filterMajor">Направление</label>
+            <select id="majorFilter"></select>
+          </div>
+          <div class="field">
+            <label for="trackFilter" data-i18n="filterTrack">Трек</label>
+            <select id="trackFilter"></select>
+          </div>
+
+          <div class="check-row">
+            <span data-i18n="filterSignals">Сигналы</span>
+            <div class="check-list">
+              <label><input id="scholarshipFilter" type="checkbox" /> <span data-i18n="hasScholarship">Есть стипендия</span></label>
+              <label><input id="mentorshipFilter" type="checkbox" /> <span data-i18n="mentorship">Готовы к советам</span></label>
+              <label><input id="essaysFilter" type="checkbox" /> <span data-i18n="hasEssays">Есть эссе</span></label>
+              <label><input id="projectsFilter" type="checkbox" /> <span data-i18n="hasProjects">Есть проекты</span></label>
+            </div>
+          </div>
+
+          <button class="reset-button" type="button" id="resetFilters" data-i18n="resetFilters">Сбросить фильтры</button>
+        </aside>
+
+        <div class="content">
+          <div class="results-toolbar">
+            <div>
+              <h2 class="results-title" id="resultsTitle">0 профилей</h2>
+              <div class="results-note" id="resultsNote" data-i18n="resultsNote">Показываются только одобренные публичные профили.</div>
+            </div>
+            <button type="button" class="secondary-button mobile-filter-button" id="openFilters" data-i18n="openFilters">Фильтры</button>
+          </div>
+          <div id="statusRegion" aria-live="polite"></div>
+          <div class="cards" id="cards"></div>
+        </div>
+      </section>
+    </main>
+
+    <main class="profile-detail wrap" id="profileView"></main>
+  </div>
+
+  <script>
+    const CONFIG = {
+      sheetId: "1R87QhvUdzuUsGFvCacXsZB0ZkYCJkCv-34KtMp6uOUQ",
+      sheetName: "PublicProfiles",
+      googleFormUrl: "",
+      contactUrl: ""
+    };
+
+    const REQUIRED_COLUMNS = [
+      "published",
+      "profile_id",
+      "display_name_ru",
+      "display_name_en",
+      "grad_year",
+      "current_place_ru",
+      "current_place_en",
+      "university",
+      "major_ru",
+      "major_en",
+      "country",
+      "city",
+      "track",
+      "offers",
+      "scholarship",
+      "advice_ru",
+      "advice_en",
+      "story_ru",
+      "story_en",
+      "tags",
+      "photo_url"
+    ];
+
+    const OPTIONAL_COLUMNS = [
+      "projects_ru",
+      "projects_en",
+      "essays_ru",
+      "essays_en",
+      "exams",
+      "activities_ru",
+      "activities_en",
+      "life_after_ru",
+      "life_after_en",
+      "habits_ru",
+      "habits_en",
+      "video_url",
+      "portfolio_url",
+      "linkedin_url",
+      "github_url",
+      "mentorship_ok",
+      "contact_public"
+    ];
+
+    const I18N = {
+      ru: {
+        brandSubtitle: "Атлас траекторий выпускников",
+        contact: "Контакт",
+        submitStory: "Добавить историю",
+        eyebrow: "Профили выпускников",
+        heroTitle: "Атлас выпускников Летово",
+        heroText: "Ищите реальные траектории: университеты, офферы, стипендии, проекты, эссе, привычки и советы выпускников.",
+        searchLabel: "Поиск по профилям",
+        searchPlaceholder: "Университет, major, проект, страна, совет",
+        statProfiles: "профилей",
+        statUniversities: "университетов",
+        statCountries: "стран",
+        statScholarships: "стипендий",
+        statMentors: "готовы помочь",
+        filters: "Фильтры",
+        filterUniversity: "Университет",
+        filterCountry: "Страна",
+        filterYear: "Год выпуска",
+        filterMajor: "Направление",
+        filterTrack: "Трек",
+        filterSignals: "Сигналы",
+        hasScholarship: "Есть стипендия",
+        mentorship: "Готовы к советам",
+        hasEssays: "Есть эссе",
+        hasProjects: "Есть проекты",
+        resetFilters: "Сбросить фильтры",
+        resultsNote: "Показываются только одобренные публичные профили.",
+        demoModeTitle: "Демо-профиль для проверки интерфейса",
+        demoModeText: "Настоящие ответы из формы не публикуются. Этот профиль вымышленный и нужен только для теста карточки, фильтров и страницы профиля.",
+        openFilters: "Фильтры",
+        all: "Все",
+        profiles: "профилей",
+        profile: "профиль",
+        loadingTitle: "Загружаем публичные профили",
+        loadingText: "Подключаемся к обработанной вкладке Google Sheet.",
+        schemaTitle: "Вкладка PublicProfiles пока не готова",
+        schemaText: "Сайт не показывает данные, потому что публичная вкладка не содержит обязательные безопасные колонки.",
+        missingColumns: "Не найдены колонки",
+        expectedColumns: "Ожидаемые колонки",
+        emptyTitle: "Профили не найдены",
+        emptyText: "Попробуйте изменить поиск или сбросить фильтры.",
+        noPublishedTitle: "Публичные профили пока не опубликованы",
+        noPublishedText: "Вкладка найдена, но в ней нет строк с включенным published.",
+        loadErrorTitle: "Не удалось загрузить профили",
+        loadErrorText: "Проверьте доступ к Google Sheet и название вкладки PublicProfiles.",
+        readProfile: "Открыть профиль",
+        university: "Университет",
+        major: "Направление",
+        currentPlace: "Сейчас",
+        graduation: "Выпуск",
+        country: "Страна",
+        track: "Трек",
+        back: "Назад к профилям",
+        share: "Скопировать ссылку",
+        copied: "Ссылка скопирована",
+        story: "История",
+        advice: "Совет летовцам",
+        offers: "Офферы",
+        scholarship: "Стипендия",
+        projects: "Проекты",
+        essays: "Эссе",
+        exams: "Экзамены",
+        activities: "Activities",
+        lifeAfter: "Жизнь после школы",
+        habits: "Привычки и система",
+        links: "Ссылки",
+        contactSection: "Контакт",
+        video: "Видео",
+        portfolio: "Портфолио",
+        linkedin: "LinkedIn",
+        github: "GitHub",
+        anonymous: "Выпускник Летово",
+        quickUniversities: "университетов",
+        quickYears: "лет выпуска",
+        quickTracks: "треков"
+      },
+      en: {
+        brandSubtitle: "Alumni pathways explorer",
+        contact: "Contact",
+        submitStory: "Add story",
+        eyebrow: "Alumni profiles",
+        heroTitle: "Letovo Alumni Atlas",
+        heroText: "Search real pathways: universities, offers, scholarships, projects, essays, habits, and alumni advice.",
+        searchLabel: "Search profiles",
+        searchPlaceholder: "University, major, project, country, advice",
+        statProfiles: "profiles",
+        statUniversities: "universities",
+        statCountries: "countries",
+        statScholarships: "scholarships",
+        statMentors: "open to help",
+        filters: "Filters",
+        filterUniversity: "University",
+        filterCountry: "Country",
+        filterYear: "Graduation year",
+        filterMajor: "Major",
+        filterTrack: "Track",
+        filterSignals: "Signals",
+        hasScholarship: "Scholarship",
+        mentorship: "Mentorship",
+        hasEssays: "Essays",
+        hasProjects: "Projects",
+        resetFilters: "Reset filters",
+        resultsNote: "Only approved public profiles are shown.",
+        demoModeTitle: "Demo profile for interface testing",
+        demoModeText: "No real form responses are being published. This fictional profile is only here to test cards, filters, and the profile page.",
+        openFilters: "Filters",
+        all: "All",
+        profiles: "profiles",
+        profile: "profile",
+        loadingTitle: "Loading public profiles",
+        loadingText: "Connecting to the processed Google Sheet tab.",
+        schemaTitle: "PublicProfiles tab is not ready",
+        schemaText: "The site is not showing data because the public tab does not contain the required safe columns.",
+        missingColumns: "Missing columns",
+        expectedColumns: "Expected columns",
+        emptyTitle: "No profiles found",
+        emptyText: "Try changing the search or resetting filters.",
+        noPublishedTitle: "No public profiles are published yet",
+        noPublishedText: "The tab was found, but it has no rows with published enabled.",
+        loadErrorTitle: "Could not load profiles",
+        loadErrorText: "Check Google Sheet access and the PublicProfiles tab name.",
+        readProfile: "Read profile",
+        university: "University",
+        major: "Major",
+        currentPlace: "Now",
+        graduation: "Class",
+        country: "Country",
+        track: "Track",
+        back: "Back to profiles",
+        share: "Copy link",
+        copied: "Copied",
+        story: "Story",
+        advice: "Advice",
+        offers: "Offers",
+        scholarship: "Scholarship",
+        projects: "Projects",
+        essays: "Essays",
+        exams: "Exams",
+        activities: "Activities",
+        lifeAfter: "Life after school",
+        habits: "Habits and system",
+        links: "Links",
+        contactSection: "Contact",
+        video: "Video",
+        portfolio: "Portfolio",
+        linkedin: "LinkedIn",
+        github: "GitHub",
+        anonymous: "Letovo alumnus",
+        quickUniversities: "universities",
+        quickYears: "grad years",
+        quickTracks: "tracks"
+      }
+    };
+
+    const savedLanguage = localStorage.getItem("letovo_atlas_lang");
+
+    // Used only while the public Sheet has no usable published rows.
+    const DEMO_PROFILES = [
+      {
+        published: "true",
+        profile_id: "demo-profile",
+        display_name_ru: "Демо-выпускник",
+        display_name_en: "Demo Alumnus",
+        grad_year: "2025",
+        current_place_ru: "Университет в Европе, Computer Science",
+        current_place_en: "European university, Computer Science",
+        university: "Example University",
+        major_ru: "Computer Science и дизайн образовательных продуктов",
+        major_en: "Computer Science and education product design",
+        country: "Netherlands",
+        city: "Amsterdam",
+        track: "International",
+        offers: "Example University; Another College; Waitlist University",
+        scholarship: "Partial merit scholarship covering 50% of tuition",
+        advice_ru: "Не пытайтесь выглядеть идеальным кандидатом. Лучше покажите, как вы думаете, учитесь, ошибаетесь и доводите проекты до результата.",
+        advice_en: "Do not try to look like a perfect applicant. Show how you think, learn, make mistakes, and turn projects into finished work.",
+        story_ru: "Этот вымышленный профиль показывает, как будет выглядеть будущая история выпускника. В реальной версии здесь будет путь: что человек делал в Летово, как выбирал страны и университеты, какие проекты помогли, где были сомнения, отказы и решения.",
+        story_en: "This fictional profile shows how a future alumni story will look. In the real version, this section will describe the pathway: what the person did at Letovo, how they chose countries and universities, which projects helped, and where uncertainty, rejections, and decisions appeared.",
+        tags: "demo, CS, scholarship, projects, essays",
+        photo_url: "assets/demo-alumni-photo.png",
+        projects_ru: "Учебный веб-сервис для младших школьников; исследовательский постер; GitHub-проект с открытым кодом.",
+        projects_en: "A learning web tool for younger students; a research poster; an open-source GitHub project.",
+        essays_ru: "Personal statement был про то, как маленький школьный проект вырос в продукт для реальных пользователей.",
+        essays_en: "The personal statement was about how a small school project grew into a product for real users.",
+        exams: "SAT 1520; IELTS 8.0; IB predicted 42/45",
+        activities_ru: "Кружок программирования, peer tutoring, организация школьного хакатона.",
+        activities_en: "Programming club, peer tutoring, organizing a school hackathon.",
+        life_after_ru: "В университете больше свободы и меньше внешнего контроля, поэтому особенно важны календарь, сон и умение просить помощи.",
+        life_after_en: "University has more freedom and less external structure, so calendar discipline, sleep, and asking for help matter a lot.",
+        habits_ru: "Еженедельное планирование, короткие заметки после занятий, один длинный блок deep work утром.",
+        habits_en: "Weekly planning, short notes after classes, and one long deep-work block in the morning.",
+        video_url: "",
+        portfolio_url: "https://example.com",
+        linkedin_url: "",
+        github_url: "https://github.com",
+        mentorship_ok: "yes",
+        contact_public: ""
+      }
+    ];
+
+    const state = {
+      lang: ["ru", "en"].includes(savedLanguage) ? savedLanguage : "ru",
+      profiles: [],
+      filtered: [],
+      loading: true,
+      error: null,
+      missingColumns: [],
+      demoMode: false,
+      filters: {
+        search: "",
+        university: "",
+        country: "",
+        year: "",
+        major: "",
+        track: "",
+        scholarship: false,
+        mentorship: false,
+        essays: false,
+        projects: false
+      }
+    };
+
+    const dom = {};
+
+    document.addEventListener("DOMContentLoaded", () => {
+      bindDom();
+      configureLinks();
+      bindEvents();
+      applyLanguage();
+      setLoadingState();
+      loadProfiles();
+    });
+
+    function bindDom() {
+      dom.explorerView = document.getElementById("explorerView");
+      dom.profileView = document.getElementById("profileView");
+      dom.homeLink = document.getElementById("homeLink");
+      dom.searchInput = document.getElementById("searchInput");
+      dom.quickChips = document.getElementById("quickChips");
+      dom.filtersPanel = document.getElementById("filtersPanel");
+      dom.openFilters = document.getElementById("openFilters");
+      dom.closeFilters = document.getElementById("closeFilters");
+      dom.activeFilterCount = document.getElementById("activeFilterCount");
+      dom.statusRegion = document.getElementById("statusRegion");
+      dom.cards = document.getElementById("cards");
+      dom.resultsTitle = document.getElementById("resultsTitle");
+      dom.universityFilter = document.getElementById("universityFilter");
+      dom.countryFilter = document.getElementById("countryFilter");
+      dom.yearFilter = document.getElementById("yearFilter");
+      dom.majorFilter = document.getElementById("majorFilter");
+      dom.trackFilter = document.getElementById("trackFilter");
+      dom.scholarshipFilter = document.getElementById("scholarshipFilter");
+      dom.mentorshipFilter = document.getElementById("mentorshipFilter");
+      dom.essaysFilter = document.getElementById("essaysFilter");
+      dom.projectsFilter = document.getElementById("projectsFilter");
+      dom.resetFilters = document.getElementById("resetFilters");
+      dom.statProfiles = document.getElementById("statProfiles");
+      dom.statUniversities = document.getElementById("statUniversities");
+      dom.statCountries = document.getElementById("statCountries");
+      dom.statScholarships = document.getElementById("statScholarships");
+      dom.statMentors = document.getElementById("statMentors");
+    }
+
+    function configureLinks() {
+      const formLink = document.getElementById("formLink");
+      const contactLink = document.getElementById("contactLink");
+      if (CONFIG.googleFormUrl) {
+        formLink.href = CONFIG.googleFormUrl;
+        formLink.classList.remove("hidden-link");
+      }
+      if (CONFIG.contactUrl) {
+        contactLink.href = CONFIG.contactUrl;
+        contactLink.classList.remove("hidden-link");
+      }
+    }
+
+    function bindEvents() {
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.lang = button.dataset.lang;
+          localStorage.setItem("letovo_atlas_lang", state.lang);
+          applyLanguage();
+          populateFilters();
+          render();
+        });
+      });
+
+      dom.homeLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        clearHash();
+      });
+
+      dom.searchInput.addEventListener("input", () => {
+        state.filters.search = dom.searchInput.value.trim();
+        applyFilters();
+      });
+
+      [
+        ["university", dom.universityFilter],
+        ["country", dom.countryFilter],
+        ["year", dom.yearFilter],
+        ["major", dom.majorFilter],
+        ["track", dom.trackFilter]
+      ].forEach(([key, element]) => {
+        element.addEventListener("change", () => {
+          state.filters[key] = element.value;
+          applyFilters();
+        });
+      });
+
+      [
+        ["scholarship", dom.scholarshipFilter],
+        ["mentorship", dom.mentorshipFilter],
+        ["essays", dom.essaysFilter],
+        ["projects", dom.projectsFilter]
+      ].forEach(([key, element]) => {
+        element.addEventListener("change", () => {
+          state.filters[key] = element.checked;
+          applyFilters();
+        });
+      });
+
+      dom.resetFilters.addEventListener("click", resetFilters);
+      dom.openFilters.addEventListener("click", () => dom.filtersPanel.classList.toggle("open"));
+      dom.closeFilters.addEventListener("click", () => dom.filtersPanel.classList.remove("open"));
+      window.addEventListener("hashchange", renderRoute);
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") dom.filtersPanel.classList.remove("open");
+      });
+    }
+
+    function t(key) {
+      return I18N[state.lang][key] || I18N.ru[key] || key;
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = state.lang;
+      document.querySelectorAll("[data-lang]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.lang === state.lang);
+      });
+      document.querySelectorAll("[data-i18n]").forEach((element) => {
+        element.textContent = t(element.dataset.i18n);
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+        element.placeholder = t(element.dataset.i18nPlaceholder);
+      });
+    }
+
+    function setLoadingState() {
+      dom.statusRegion.innerHTML = `
+        <div class="state-card">
+          <h2>${escapeHtml(t("loadingTitle"))}</h2>
+          <p>${escapeHtml(t("loadingText"))}</p>
+          <div class="loading-line"></div>
+        </div>
+      `;
+      dom.cards.innerHTML = "";
+    }
+
+    async function loadProfiles() {
+      try {
+        const data = await loadSheetJsonp();
+        const { profiles, missingColumns } = parseSheet(data);
+        if (missingColumns.length) {
+          useDemoProfiles(missingColumns);
+        } else {
+          state.error = null;
+          state.missingColumns = [];
+          state.demoMode = !profiles.length;
+          state.profiles = profiles.length ? profiles : DEMO_PROFILES.map(normalizeProfile);
+        }
+      } catch (error) {
+        console.error(error);
+        useDemoProfiles([]);
+      } finally {
+        state.loading = false;
+        populateFilters();
+        applyFilters();
+        renderRoute();
+      }
+    }
+
+    function useDemoProfiles(missingColumns) {
+      state.error = null;
+      state.demoMode = true;
+      state.missingColumns = missingColumns;
+      state.profiles = DEMO_PROFILES.map(normalizeProfile);
+    }
+
+    function loadSheetJsonp() {
+      return new Promise((resolve, reject) => {
+        const callbackName = `letovoProfiles_${Date.now()}_${Math.round(Math.random() * 100000)}`;
+        const script = document.createElement("script");
+        const tqx = `out:json;responseHandler:${callbackName}`;
+        const url = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(CONFIG.sheetId)}/gviz/tq?sheet=${encodeURIComponent(CONFIG.sheetName)}&tqx=${encodeURIComponent(tqx)}`;
+
+        window[callbackName] = (payload) => {
+          cleanup();
+          resolve(payload);
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Google Sheet JSONP request failed"));
+        };
+
+        function cleanup() {
+          delete window[callbackName];
+          script.remove();
+        }
+
+        script.src = url;
+        document.head.appendChild(script);
+      });
+    }
+
+    function parseSheet(payload) {
+      const table = payload && payload.table;
+      const columns = Array.isArray(table && table.cols) ? table.cols : [];
+      const rows = Array.isArray(table && table.rows) ? table.rows : [];
+      const headers = columns.map((column) => normalizeHeader(column.label));
+      const headerSet = new Set(headers);
+      const missingColumns = REQUIRED_COLUMNS.filter((column) => !headerSet.has(column));
+
+      if (missingColumns.length) {
+        return { profiles: [], missingColumns };
+      }
+
+      const profiles = rows
+        .map((row) => rowToObject(row, headers))
+        .filter((row) => isTruthy(row.published) && row.profile_id)
+        .map(normalizeProfile);
+
+      return { profiles, missingColumns: [] };
+    }
+
+    function rowToObject(row, headers) {
+      const values = {};
+      headers.forEach((header, index) => {
+        if (!header) return;
+        const cell = row.c && row.c[index];
+        values[header] = formatCell(cell);
+      });
+      OPTIONAL_COLUMNS.forEach((column) => {
+        if (!(column in values)) values[column] = "";
+      });
+      return values;
+    }
+
+    function normalizeHeader(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function formatCell(cell) {
+      if (!cell) return "";
+      if (cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
+      if (cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
+      return "";
+    }
+
+    function normalizeProfile(row) {
+      const profile = { ...row };
+      profile.profile_id = slugValue(profile.profile_id);
+      profile.tagsList = splitMulti(profile.tags);
+      profile.offersList = splitMulti(profile.offers);
+      profile.majorKey = profile.major_ru || profile.major_en;
+      profile.hasScholarship = hasMeaningful(profile.scholarship);
+      profile.hasMentorship = isTruthy(profile.mentorship_ok);
+      profile.hasEssays = hasMeaningful(profile.essays_ru) || hasMeaningful(profile.essays_en);
+      profile.hasProjects = hasMeaningful(profile.projects_ru) || hasMeaningful(profile.projects_en);
+      profile.photoResolved = resolveImageUrl(profile.photo_url);
+      profile.searchText = buildSearchText(profile);
+      return profile;
+    }
+
+    function buildSearchText(profile) {
+      const fields = [
+        profile.display_name_ru,
+        profile.display_name_en,
+        profile.grad_year,
+        profile.current_place_ru,
+        profile.current_place_en,
+        profile.university,
+        profile.major_ru,
+        profile.major_en,
+        profile.country,
+        profile.city,
+        profile.track,
+        profile.offers,
+        profile.scholarship,
+        profile.advice_ru,
+        profile.advice_en,
+        profile.story_ru,
+        profile.story_en,
+        profile.tags,
+        profile.projects_ru,
+        profile.projects_en,
+        profile.essays_ru,
+        profile.essays_en,
+        profile.exams,
+        profile.activities_ru,
+        profile.activities_en
+      ];
+      return normalizeSearch(fields.join(" "));
+    }
+
+    function splitMulti(value) {
+      return String(value || "")
+        .split(/[,\n;]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function isTruthy(value) {
+      const normalized = String(value || "").trim().toLowerCase();
+      return ["1", "true", "yes", "y", "да", "published", "опубликовано", "x", "✓"].includes(normalized);
+    }
+
+    function hasMeaningful(value) {
+      const normalized = String(value || "").trim().toLowerCase();
+      return Boolean(normalized) && !["no", "none", "n/a", "na", "нет", "не было", "-", "0"].includes(normalized);
+    }
+
+    function slugValue(value) {
+      return String(value || "").trim().replace(/\s+/g, "-").toLowerCase();
+    }
+
+    function normalizeSearch(value) {
+      return String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function resolveImageUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      const driveFile = raw.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+      const driveId = raw.match(/[?&]id=([^&]+)/);
+      if (driveFile && driveFile[1]) return `https://drive.google.com/uc?export=view&id=${encodeURIComponent(driveFile[1])}`;
+      if (raw.includes("drive.google.com") && driveId && driveId[1]) return `https://drive.google.com/uc?export=view&id=${encodeURIComponent(driveId[1])}`;
+      return safeUrl(raw);
+    }
+
+    function safeUrl(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+      if (/^(assets\/|\.\/assets\/)/.test(raw) && !raw.includes(":")) return raw;
+      try {
+        const url = new URL(raw, window.location.href);
+        return ["http:", "https:", "mailto:"].includes(url.protocol) ? url.href : "";
+      } catch (error) {
+        return "";
+      }
+    }
+
+    function loc(profile, base) {
+      const primary = profile[`${base}_${state.lang}`];
+      const fallback = profile[`${base}_${state.lang === "ru" ? "en" : "ru"}`];
+      return primary || fallback || "";
+    }
+
+    function populateFilters() {
+      setOptions(dom.universityFilter, state.profiles.map((p) => ({ value: p.university, label: p.university })), state.filters.university);
+      setOptions(dom.countryFilter, state.profiles.map((p) => ({ value: p.country, label: withCityLabel(p.country, p.city) })), state.filters.country);
+      setOptions(dom.yearFilter, state.profiles.map((p) => ({ value: p.grad_year, label: p.grad_year })), state.filters.year, true);
+      setOptions(dom.majorFilter, state.profiles.map((p) => ({ value: p.majorKey, label: loc(p, "major") || p.majorKey })), state.filters.major);
+      setOptions(dom.trackFilter, state.profiles.map((p) => ({ value: p.track, label: p.track })), state.filters.track);
+    }
+
+    function withCityLabel(country, city) {
+      if (!country) return "";
+      return city ? `${country} · ${city}` : country;
+    }
+
+    function setOptions(select, values, selectedValue, descending = false) {
+      const seen = new Map();
+      values.forEach(({ value, label }) => {
+        if (!value || seen.has(value)) return;
+        seen.set(value, label || value);
+      });
+      const sorted = [...seen.entries()].sort((a, b) => {
+        const result = String(a[1]).localeCompare(String(b[1]), state.lang === "ru" ? "ru" : "en", { numeric: true });
+        return descending ? -result : result;
+      });
+      select.innerHTML = `<option value="">${escapeHtml(t("all"))}</option>` + sorted
+        .map(([value, label]) => `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`)
+        .join("");
+      select.value = selectedValue && seen.has(selectedValue) ? selectedValue : "";
+      if (select.value !== selectedValue) {
+        const key = select.id.replace("Filter", "");
+        if (state.filters[key] !== undefined) state.filters[key] = "";
+      }
+    }
+
+    function applyFilters() {
+      const search = normalizeSearch(state.filters.search);
+      state.filtered = state.profiles.filter((profile) => {
+        if (search && !profile.searchText.includes(search)) return false;
+        if (state.filters.university && profile.university !== state.filters.university) return false;
+        if (state.filters.country && profile.country !== state.filters.country) return false;
+        if (state.filters.year && profile.grad_year !== state.filters.year) return false;
+        if (state.filters.major && profile.majorKey !== state.filters.major) return false;
+        if (state.filters.track && profile.track !== state.filters.track) return false;
+        if (state.filters.scholarship && !profile.hasScholarship) return false;
+        if (state.filters.mentorship && !profile.hasMentorship) return false;
+        if (state.filters.essays && !profile.hasEssays) return false;
+        if (state.filters.projects && !profile.hasProjects) return false;
+        return true;
+      });
+      render();
+    }
+
+    function resetFilters() {
+      Object.keys(state.filters).forEach((key) => {
+        state.filters[key] = typeof state.filters[key] === "boolean" ? false : "";
+      });
+      dom.searchInput.value = "";
+      dom.scholarshipFilter.checked = false;
+      dom.mentorshipFilter.checked = false;
+      dom.essaysFilter.checked = false;
+      dom.projectsFilter.checked = false;
+      populateFilters();
+      dom.filtersPanel.classList.remove("open");
+      applyFilters();
+    }
+
+    function render() {
+      syncControls();
+      renderStats();
+      renderQuickChips();
+      renderResultsTitle();
+      renderStatus();
+      renderCards();
+      renderRoute();
+    }
+
+    function syncControls() {
+      dom.activeFilterCount.textContent = String(activeFilterCount());
+      dom.searchInput.value = state.filters.search;
+      dom.universityFilter.value = state.filters.university;
+      dom.countryFilter.value = state.filters.country;
+      dom.yearFilter.value = state.filters.year;
+      dom.majorFilter.value = state.filters.major;
+      dom.trackFilter.value = state.filters.track;
+      dom.scholarshipFilter.checked = state.filters.scholarship;
+      dom.mentorshipFilter.checked = state.filters.mentorship;
+      dom.essaysFilter.checked = state.filters.essays;
+      dom.projectsFilter.checked = state.filters.projects;
+    }
+
+    function activeFilterCount() {
+      return Object.values(state.filters).filter((value) => Boolean(value)).length;
+    }
+
+    function renderStats() {
+      const profiles = state.profiles;
+      dom.statProfiles.textContent = profiles.length;
+      dom.statUniversities.textContent = uniqueCount(profiles, "university");
+      dom.statCountries.textContent = uniqueCount(profiles, "country");
+      dom.statScholarships.textContent = profiles.filter((profile) => profile.hasScholarship).length;
+      dom.statMentors.textContent = profiles.filter((profile) => profile.hasMentorship).length;
+    }
+
+    function uniqueCount(profiles, key) {
+      return new Set(profiles.map((profile) => profile[key]).filter(Boolean)).size;
+    }
+
+    function renderQuickChips() {
+      const profiles = state.profiles;
+      const items = [
+        `${uniqueCount(profiles, "university")} ${t("quickUniversities")}`,
+        `${uniqueCount(profiles, "grad_year")} ${t("quickYears")}`,
+        `${uniqueCount(profiles, "track")} ${t("quickTracks")}`
+      ];
+      dom.quickChips.innerHTML = items.map((item) => `<span class="quick-chip">${escapeHtml(item)}</span>`).join("");
+    }
+
+    function renderResultsTitle() {
+      const count = state.filtered.length;
+      const label = count === 1 ? t("profile") : t("profiles");
+      dom.resultsTitle.textContent = `${count} ${label}`;
+    }
+
+    function renderStatus() {
+      if (state.loading) return;
+      if (state.error === "schema") {
+        dom.statusRegion.innerHTML = schemaErrorTemplate();
+        return;
+      }
+      if (state.error === "load") {
+        dom.statusRegion.innerHTML = `
+          <div class="state-card">
+            <h2>${escapeHtml(t("loadErrorTitle"))}</h2>
+            <p>${escapeHtml(t("loadErrorText"))}</p>
+          </div>
+        `;
+        return;
+      }
+      if (!state.profiles.length) {
+        dom.statusRegion.innerHTML = `
+          <div class="state-card">
+            <h2>${escapeHtml(t("noPublishedTitle"))}</h2>
+            <p>${escapeHtml(t("noPublishedText"))}</p>
+          </div>
+        `;
+        return;
+      }
+      if (state.demoMode && state.filtered.length) {
+        dom.statusRegion.innerHTML = `
+          <div class="state-card">
+            <h2>${escapeHtml(t("demoModeTitle"))}</h2>
+            <p>${escapeHtml(t("demoModeText"))}</p>
+          </div>
+        `;
+        return;
+      }
+      if (!state.filtered.length) {
+        dom.statusRegion.innerHTML = `
+          <div class="state-card">
+            <h2>${escapeHtml(t("emptyTitle"))}</h2>
+            <p>${escapeHtml(t("emptyText"))}</p>
+          </div>
+        `;
+        return;
+      }
+      dom.statusRegion.innerHTML = "";
+    }
+
+    function schemaErrorTemplate() {
+      const expected = [...REQUIRED_COLUMNS, ...OPTIONAL_COLUMNS];
+      return `
+        <div class="state-card">
+          <h2>${escapeHtml(t("schemaTitle"))}</h2>
+          <p>${escapeHtml(t("schemaText"))}</p>
+          <p><strong>${escapeHtml(t("missingColumns"))}:</strong> ${state.missingColumns.map(escapeHtml).join(", ")}</p>
+          <p><strong>${escapeHtml(t("expectedColumns"))}:</strong></p>
+          <div class="schema-list">
+            ${expected.map((column) => `<span class="schema-pill">${escapeHtml(column)}</span>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCards() {
+      if (state.loading || state.error || !state.filtered.length) {
+        dom.cards.innerHTML = "";
+        return;
+      }
+      dom.cards.innerHTML = state.filtered.map(profileCardTemplate).join("");
+      dom.cards.querySelectorAll("[data-profile-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          window.location.hash = `profile=${encodeURIComponent(button.dataset.profileId)}`;
+        });
+      });
+    }
+
+    function profileCardTemplate(profile) {
+      const name = loc(profile, "display_name") || t("anonymous");
+      const current = loc(profile, "current_place");
+      const major = loc(profile, "major");
+      const advice = loc(profile, "advice") || loc(profile, "story");
+      const meta = [profile.grad_year && `${t("graduation")} ${profile.grad_year}`, profile.country].filter(Boolean).join(" · ");
+      const tags = profile.tagsList.slice(0, 4);
+      return `
+        <article class="profile-card">
+          <div class="card-media">
+            ${avatarTemplate(profile, name, "avatar")}
+            <div class="card-person">
+              <h2>${escapeHtml(name)}</h2>
+              <div class="meta-line">${escapeHtml(meta)}</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="fact-row">
+              ${factTemplate(t("university"), profile.university)}
+              ${factTemplate(t("major"), major)}
+              ${factTemplate(t("currentPlace"), current)}
+            </div>
+            ${advice ? `<p class="advice">${escapeHtml(advice)}</p>` : ""}
+            ${tags.length ? `<div class="tags">${tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+          </div>
+          <div class="card-footer">
+            <button class="read-button" type="button" data-profile-id="${escapeHtml(profile.profile_id)}">${escapeHtml(t("readProfile"))}</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function avatarTemplate(profile, name, className) {
+      const initials = initialsFromName(name);
+      const photo = safeUrl(profile.photoResolved);
+      return `
+        <div class="${className}" aria-hidden="true">
+          <span class="avatar-fallback">${escapeHtml(initials)}</span>
+          ${photo ? `<img src="${escapeHtml(photo)}" alt="" loading="lazy" onerror="this.remove()">` : ""}
+        </div>
+      `;
+    }
+
+    function factTemplate(label, value) {
+      if (!value) return "";
+      return `
+        <div class="fact">
+          <strong>${escapeHtml(label)}</strong>
+          <span>${escapeHtml(value)}</span>
+        </div>
+      `;
+    }
+
+    function renderRoute() {
+      const profileId = currentProfileId();
+      if (!profileId) {
+        dom.explorerView.style.display = "";
+        dom.profileView.classList.remove("active");
+        dom.profileView.innerHTML = "";
+        return;
+      }
+      const profile = state.profiles.find((item) => item.profile_id === profileId);
+      dom.explorerView.style.display = "none";
+      dom.profileView.classList.add("active");
+      if (!profile) {
+        dom.profileView.innerHTML = `
+          <div class="back-row">
+            <button class="secondary-button" type="button" id="backToProfiles">${escapeHtml(t("back"))}</button>
+          </div>
+          <div class="state-card">
+            <h2>${escapeHtml(t("emptyTitle"))}</h2>
+            <p>${escapeHtml(t("emptyText"))}</p>
+          </div>
+        `;
+        document.getElementById("backToProfiles").addEventListener("click", clearHash);
+        return;
+      }
+      dom.profileView.innerHTML = profileDetailTemplate(profile);
+      document.getElementById("backToProfiles").addEventListener("click", clearHash);
+      document.getElementById("copyProfileLink").addEventListener("click", copyProfileLink);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function currentProfileId() {
+      const hash = window.location.hash.replace(/^#/, "");
+      const params = new URLSearchParams(hash);
+      return params.get("profile");
+    }
+
+    function clearHash() {
+      history.pushState("", document.title, `${window.location.pathname}${window.location.search}`);
+      renderRoute();
+    }
+
+    async function copyProfileLink() {
+      const button = document.getElementById("copyProfileLink");
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        button.textContent = t("copied");
+        setTimeout(() => { button.textContent = t("share"); }, 1400);
+      } catch (error) {
+        button.textContent = window.location.href;
+      }
+    }
+
+    function profileDetailTemplate(profile) {
+      const name = loc(profile, "display_name") || t("anonymous");
+      const current = loc(profile, "current_place");
+      const major = loc(profile, "major");
+      const sections = [
+        detailTextSection(t("advice"), loc(profile, "advice")),
+        detailTextSection(t("story"), loc(profile, "story")),
+        detailListSection(t("offers"), profile.offersList),
+        detailTextSection(t("scholarship"), profile.scholarship),
+        detailTextSection(t("projects"), loc(profile, "projects")),
+        detailTextSection(t("essays"), loc(profile, "essays")),
+        detailTextSection(t("exams"), profile.exams),
+        detailTextSection(t("activities"), loc(profile, "activities")),
+        detailTextSection(t("lifeAfter"), loc(profile, "life_after")),
+        detailTextSection(t("habits"), loc(profile, "habits"))
+      ].filter(Boolean).join("");
+
+      const links = linksTemplate(profile);
+      const contact = contactTemplate(profile);
+
+      return `
+        <div class="back-row">
+          <button class="secondary-button" type="button" id="backToProfiles">${escapeHtml(t("back"))}</button>
+          <button class="secondary-button" type="button" id="copyProfileLink">${escapeHtml(t("share"))}</button>
+        </div>
+        <section class="detail-hero">
+          <div class="detail-hero-inner">
+            ${avatarTemplate(profile, name, "avatar detail-avatar")}
+            <div class="detail-heading">
+              <h1>${escapeHtml(name)}</h1>
+              <div class="detail-meta">
+                ${profile.grad_year ? `<span class="detail-chip">${escapeHtml(t("graduation"))} ${escapeHtml(profile.grad_year)}</span>` : ""}
+                ${profile.university ? `<span class="detail-chip">${escapeHtml(profile.university)}</span>` : ""}
+                ${major ? `<span class="detail-chip">${escapeHtml(major)}</span>` : ""}
+                ${profile.country ? `<span class="detail-chip">${escapeHtml(withCityLabel(profile.country, profile.city))}</span>` : ""}
+                ${profile.track ? `<span class="detail-chip">${escapeHtml(profile.track)}</span>` : ""}
+              </div>
+            </div>
+          </div>
+        </section>
+        <div class="detail-grid">
+          <div class="detail-sections">${sections || detailTextSection(t("story"), current)}</div>
+          <aside class="detail-aside">
+            <h2>${escapeHtml(t("profile"))}</h2>
+            <ul class="side-list">
+              ${sideFact(t("currentPlace"), current)}
+              ${sideFact(t("university"), profile.university)}
+              ${sideFact(t("major"), major)}
+              ${sideFact(t("country"), withCityLabel(profile.country, profile.city))}
+              ${sideFact(t("track"), profile.track)}
+            </ul>
+            ${profile.tagsList.length ? `<div class="tags" style="margin-top:14px">${profile.tagsList.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
+            ${links}
+            ${contact}
+          </aside>
+        </div>
+      `;
+    }
+
+    function detailTextSection(title, value) {
+      if (!hasMeaningful(value)) return "";
+      return `
+        <section class="detail-section">
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(value)}</p>
+        </section>
+      `;
+    }
+
+    function detailListSection(title, items) {
+      if (!items.length) return "";
+      return `
+        <section class="detail-section">
+          <h2>${escapeHtml(title)}</h2>
+          <ul class="bullet-list">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </section>
+      `;
+    }
+
+    function sideFact(label, value) {
+      if (!value) return "";
+      return `<li><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></li>`;
+    }
+
+    function linksTemplate(profile) {
+      const links = [
+        ["video_url", t("video")],
+        ["portfolio_url", t("portfolio")],
+        ["linkedin_url", t("linkedin")],
+        ["github_url", t("github")]
+      ]
+        .map(([key, label]) => ({ url: safeUrl(profile[key]), label }))
+        .filter((item) => item.url);
+
+      if (!links.length) return "";
+      return `
+        <div style="margin-top:16px">
+          <h2>${escapeHtml(t("links"))}</h2>
+          <div class="link-list">
+            ${links.map((item) => `<a class="external-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.label)}</a>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function contactTemplate(profile) {
+      const value = String(profile.contact_public || "").trim();
+      if (!value || ["1", "true", "yes", "да"].includes(value.toLowerCase())) return "";
+      const url = safeUrl(value);
+      return `
+        <div style="margin-top:16px">
+          <h2>${escapeHtml(t("contactSection"))}</h2>
+          ${url ? `<a class="external-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(value)}</a>` : `<p>${escapeHtml(value)}</p>`}
+        </div>
+      `;
+    }
+
+    function initialsFromName(name) {
+      const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+      const first = parts[0] && parts[0][0] ? parts[0][0] : "L";
+      const second = parts[1] && parts[1][0] ? parts[1][0] : "";
+      return first.toUpperCase() + second.toUpperCase();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

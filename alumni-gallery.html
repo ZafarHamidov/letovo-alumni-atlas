@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Letovo Alumni Atlas Gallery</title>
+  <style>
+    :root {
+      --blue: #0d3174;
+      --yellow: #fdc300;
+      --turquoise: #00adb9;
+      --ink: #1d1d1b;
+      --gray: #b2b2b2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .gallery {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      border: 1px solid rgba(13, 49, 116, 0.16);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      min-height: 420px;
+      background:
+        linear-gradient(135deg, rgba(13, 49, 116, 0.92), rgba(29, 29, 27, 0.78)),
+        #0d3174;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .slide.is-active {
+      display: block;
+    }
+
+    .empty {
+      display: none;
+      place-items: center;
+      min-height: 420px;
+      padding: 28px;
+      color: #fff;
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .empty.is-visible {
+      display: grid;
+    }
+
+    .nav {
+      position: absolute;
+      top: 50%;
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      background: rgba(13, 49, 116, 0.86);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+      cursor: pointer;
+      transform: translateY(-50%);
+    }
+
+    .nav:hover,
+    .nav:focus-visible {
+      background: var(--blue);
+      outline: 2px solid var(--yellow);
+      outline-offset: 2px;
+    }
+
+    .prev {
+      left: 14px;
+    }
+
+    .next {
+      right: 14px;
+    }
+
+    .caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-top: 4px solid var(--yellow);
+      background: #fff;
+      font-size: 14px;
+    }
+
+    .caption strong {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .counter {
+      flex: 0 0 auto;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 14px 14px;
+      background: #fff;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(13, 49, 116, 0.24);
+      cursor: pointer;
+    }
+
+    .dot.is-active {
+      background: var(--turquoise);
+    }
+
+    @media (max-width: 560px) {
+      .stage,
+      .slide,
+      .empty {
+        min-height: 300px;
+      }
+
+      .nav {
+        width: 38px;
+        height: 38px;
+      }
+
+      .caption {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery" aria-label="Фотографии Letovo Alumni Atlas">
+    <div class="stage" id="stage">
+      <div class="empty" id="empty">
+        Фотографии скоро появятся здесь. Добавьте файлы gallery-01.jpg ... gallery-06.jpg в assets/form-gallery.
+      </div>
+      <button class="nav prev" type="button" id="prev" aria-label="Предыдущая фотография">&larr;</button>
+      <button class="nav next" type="button" id="next" aria-label="Следующая фотография">&rarr;</button>
+    </div>
+    <div class="caption">
+      <strong id="title">Letovo Alumni Atlas</strong>
+      <span class="counter" id="counter">0 / 0</span>
+    </div>
+    <div class="dots" id="dots" aria-label="Выбор фотографии"></div>
+  </div>
+
+  <script>
+    const photos = [
+      { type: "image", src: "assets/form-gallery/gallery-01.jpg", title: "Олимпиада и достижения" },
+      { type: "video", src: "assets/form-gallery/gallery-02.mp4", title: "Видео проекта" },
+      { type: "image", src: "assets/form-gallery/gallery-03.jpg", title: "Встречи и сообщество" },
+      { type: "image", src: "assets/form-gallery/gallery-04.jpg", title: "Школьная команда" },
+      { type: "image", src: "assets/form-gallery/gallery-05.jpg", title: "Спорт и личные цели" },
+      { type: "image", src: "assets/form-gallery/gallery-06.jpg", title: "Тренировки и дисциплина" },
+      { type: "image", src: "assets/form-gallery/gallery-07.png", title: "Проекты, быт и привычки" }
+    ];
+
+    const stage = document.getElementById("stage");
+    const empty = document.getElementById("empty");
+    const title = document.getElementById("title");
+    const counter = document.getElementById("counter");
+    const dots = document.getElementById("dots");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const loaded = [];
+    let current = 0;
+
+    function render() {
+      const hasSlides = loaded.length > 0;
+      empty.classList.toggle("is-visible", !hasSlides);
+      prev.hidden = !hasSlides;
+      next.hidden = !hasSlides;
+      dots.hidden = !hasSlides;
+
+      loaded.forEach((photo, index) => {
+        const isActive = index === current;
+        photo.element.classList.toggle("is-active", isActive);
+        if (photo.element.tagName === "VIDEO" && !isActive) {
+          photo.element.pause();
+        }
+      });
+
+      if (hasSlides) {
+        title.textContent = loaded[current].title;
+        counter.textContent = `${current + 1} / ${loaded.length}`;
+      } else {
+        title.textContent = "Letovo Alumni Atlas";
+        counter.textContent = "0 / 0";
+      }
+
+      [...dots.children].forEach((dot, index) => {
+        dot.classList.toggle("is-active", index === current);
+      });
+    }
+
+    function go(delta) {
+      if (!loaded.length) return;
+      current = (current + delta + loaded.length) % loaded.length;
+      render();
+    }
+
+    photos.forEach((photo) => {
+      const element = photo.type === "video" ? document.createElement("video") : new Image();
+      element.className = "slide";
+      if (photo.type === "video") {
+        element.controls = true;
+        element.preload = "metadata";
+      } else {
+        element.alt = photo.title;
+      }
+
+      const addSlide = () => {
+        loaded.push({ ...photo, element });
+        stage.insertBefore(element, empty);
+
+        const dot = document.createElement("button");
+        dot.className = "dot";
+        dot.type = "button";
+        dot.setAttribute("aria-label", photo.title);
+        dot.addEventListener("click", () => {
+          current = loaded.findIndex((item) => item.element === element);
+          render();
+        });
+        dots.appendChild(dot);
+        render();
+      };
+
+      if (photo.type === "video") {
+        element.addEventListener("loadedmetadata", addSlide, { once: true });
+      } else {
+        element.onload = addSlide;
+      }
+      element.src = photo.src;
+    });
+
+    prev.addEventListener("click", () => go(-1));
+    next.addEventListener("click", () => go(1));
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") go(-1);
+      if (event.key === "ArrowRight") go(1);
+    });
+
+    render();
+  </script>
+</body>
+</html>

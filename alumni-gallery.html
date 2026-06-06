@@ -37,7 +37,8 @@
     .stage {
       position: relative;
       display: grid;
-      min-height: 420px;
+      aspect-ratio: 16 / 10;
+      min-height: 0;
       background:
         linear-gradient(135deg, rgba(13, 49, 116, 0.92), rgba(29, 29, 27, 0.78)),
         #0d3174;
@@ -47,7 +48,6 @@
       display: none;
       width: 100%;
       height: 100%;
-      min-height: 420px;
       object-fit: contain;
       object-position: center;
     }
@@ -59,7 +59,7 @@
     .empty {
       display: none;
       place-items: center;
-      min-height: 420px;
+      min-height: 320px;
       padding: 28px;
       color: #fff;
       text-align: center;
@@ -102,34 +102,13 @@
       right: 14px;
     }
 
-    .caption {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 12px 14px;
-      border-top: 4px solid var(--yellow);
-      background: #fff;
-      font-size: 14px;
-    }
-
-    .caption strong {
-      color: var(--blue);
-      font-weight: 700;
-    }
-
-    .counter {
-      flex: 0 0 auto;
-      color: var(--blue);
-      font-weight: 700;
-    }
-
     .dots {
       display: flex;
       gap: 7px;
       align-items: center;
       justify-content: center;
-      padding: 0 14px 14px;
+      padding: 12px 14px;
+      border-top: 4px solid var(--yellow);
       background: #fff;
     }
 
@@ -148,21 +127,9 @@
     }
 
     @media (max-width: 560px) {
-      .stage,
-      .slide,
-      .empty {
-        min-height: 300px;
-      }
-
       .nav {
         width: 38px;
         height: 38px;
-      }
-
-      .caption {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 6px;
       }
     }
   </style>
@@ -176,28 +143,22 @@
       <button class="nav prev" type="button" id="prev" aria-label="Предыдущая фотография">&larr;</button>
       <button class="nav next" type="button" id="next" aria-label="Следующая фотография">&rarr;</button>
     </div>
-    <div class="caption">
-      <strong id="title">Letovo Alumni Atlas</strong>
-      <span class="counter" id="counter">0 / 0</span>
-    </div>
     <div class="dots" id="dots" aria-label="Выбор фотографии"></div>
   </div>
 
   <script>
     const photos = [
-      { type: "image", src: "assets/form-gallery/gallery-01.jpg", title: "Олимпиада и достижения" },
-      { type: "video", src: "assets/form-gallery/gallery-02.mp4", title: "Видео проекта" },
-      { type: "image", src: "assets/form-gallery/gallery-03.jpg", title: "Встречи и сообщество" },
-      { type: "image", src: "assets/form-gallery/gallery-04.jpg", title: "Школьная команда" },
-      { type: "image", src: "assets/form-gallery/gallery-05.jpg", title: "Спорт и личные цели" },
-      { type: "image", src: "assets/form-gallery/gallery-06.jpg", title: "Тренировки и дисциплина" },
-      { type: "image", src: "assets/form-gallery/gallery-07.png", title: "Проекты, быт и привычки" }
+      { type: "image", src: "assets/form-gallery/gallery-01.jpg?v=2", alt: "Фотография Letovo Alumni Atlas 1" },
+      { type: "video", src: "assets/form-gallery/gallery-02.mp4?v=2", alt: "Видео Letovo Alumni Atlas" },
+      { type: "image", src: "assets/form-gallery/gallery-03.jpg?v=2", alt: "Фотография Letovo Alumni Atlas 2" },
+      { type: "image", src: "assets/form-gallery/gallery-04.jpg?v=2", alt: "Фотография Letovo Alumni Atlas 3" },
+      { type: "image", src: "assets/form-gallery/gallery-05.jpg?v=2", alt: "Фотография Letovo Alumni Atlas 4" },
+      { type: "image", src: "assets/form-gallery/gallery-06.jpg?v=2", alt: "Фотография Letovo Alumni Atlas 5" },
+      { type: "image", src: "assets/form-gallery/gallery-07.png?v=2", alt: "Фотография Letovo Alumni Atlas 6" }
     ];
 
     const stage = document.getElementById("stage");
     const empty = document.getElementById("empty");
-    const title = document.getElementById("title");
-    const counter = document.getElementById("counter");
     const dots = document.getElementById("dots");
     const prev = document.getElementById("prev");
     const next = document.getElementById("next");
@@ -219,14 +180,6 @@
         }
       });
 
-      if (hasSlides) {
-        title.textContent = loaded[current].title;
-        counter.textContent = `${current + 1} / ${loaded.length}`;
-      } else {
-        title.textContent = "Letovo Alumni Atlas";
-        counter.textContent = "0 / 0";
-      }
-
       [...dots.children].forEach((dot, index) => {
         dot.classList.toggle("is-active", index === current);
       });
@@ -245,7 +198,7 @@
         element.controls = true;
         element.preload = "metadata";
       } else {
-        element.alt = photo.title;
+        element.alt = photo.alt;
       }
 
       const addSlide = () => {
@@ -255,7 +208,7 @@
         const dot = document.createElement("button");
         dot.className = "dot";
         dot.type = "button";
-        dot.setAttribute("aria-label", photo.title);
+        dot.setAttribute("aria-label", `Слайд ${loaded.length}`);
         dot.addEventListener("click", () => {
           current = loaded.findIndex((item) => item.element === element);
           render();

@@ -5,8 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Letovo Alumni Atlas | Profiles Explorer</title>
   <meta name="description" content="Searchable bilingual profiles explorer for Letovo alumni stories, universities, scholarships, projects, essays, and advice." />
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem("letovo_atlas_theme");
+        document.documentElement.dataset.theme = ["blue", "red", "mosaic"].includes(savedTheme) ? savedTheme : "red";
+      } catch (error) {
+        document.documentElement.dataset.theme = "red";
+      }
+    })();
+  </script>
   <style>
-    :root {
+    :root,
+    html[data-theme="red"] {
       --blue: #a1003e;
       --blue-2: #7b0030;
       --yellow: #fdc300;
@@ -19,8 +30,48 @@
       --line: #d8dde8;
       --panel: #ffffff;
       --soft: #fbf3f6;
+      --surface-bg: #fbf3f6;
+      --surface-tint: #fff8fb;
+      --skeleton-tint: #f0d7e2;
+      --primary-rgb: 161, 0, 62;
+      --hero-gradient: linear-gradient(90deg, rgba(161, 0, 62, 0.97), rgba(123, 0, 48, 0.92));
+      --card-gradient: linear-gradient(135deg, rgba(161, 0, 62, 0.95), rgba(123, 0, 48, 0.95));
       --radius: 8px;
-      --shadow: 0 18px 42px rgba(161, 0, 62, 0.14);
+      --shadow: 0 18px 42px rgba(var(--primary-rgb), 0.14);
+    }
+
+    html[data-theme="blue"] {
+      --blue: #123274;
+      --blue-2: #0d3174;
+      --yellow: #fdc300;
+      --turquoise: #00adb9;
+      --red: #a40c30;
+      --light-blue: #d2e2f2;
+      --soft: #f3f6fb;
+      --surface-bg: #eef3fa;
+      --surface-tint: #f7f9fd;
+      --skeleton-tint: #dfe8f6;
+      --primary-rgb: 13, 49, 116;
+      --hero-gradient: linear-gradient(90deg, rgba(13, 49, 116, 0.96), rgba(13, 49, 116, 0.9));
+      --card-gradient: linear-gradient(135deg, rgba(13, 49, 116, 0.95), rgba(9, 38, 93, 0.95));
+      --shadow: 0 18px 42px rgba(var(--primary-rgb), 0.12);
+    }
+
+    html[data-theme="mosaic"] {
+      --blue: #007f89;
+      --blue-2: #0d3174;
+      --yellow: #fdc300;
+      --turquoise: #00adb9;
+      --red: #a1003e;
+      --light-blue: #d6f1f3;
+      --soft: #f2faf9;
+      --surface-bg: #f2faf9;
+      --surface-tint: #f7fbf6;
+      --skeleton-tint: #d4f1ee;
+      --primary-rgb: 0, 127, 137;
+      --hero-gradient: linear-gradient(115deg, rgba(13, 49, 116, 0.96), rgba(161, 0, 62, 0.9) 56%, rgba(0, 173, 185, 0.82));
+      --card-gradient: linear-gradient(135deg, rgba(13, 49, 116, 0.96), rgba(0, 173, 185, 0.9) 52%, rgba(161, 0, 62, 0.88));
+      --shadow: 0 18px 42px rgba(var(--primary-rgb), 0.13);
     }
 
     * {
@@ -33,7 +84,7 @@
 
     body {
       margin: 0;
-      background: #fbf3f6;
+      background: var(--surface-bg);
       color: var(--ink);
       font-family: "Segoe UI", Arial, Helvetica, sans-serif;
       line-height: 1.5;
@@ -57,8 +108,8 @@
     .shell {
       min-height: 100vh;
       background:
-        linear-gradient(180deg, rgba(161, 0, 62, 0.09), rgba(161, 0, 62, 0) 440px),
-        #fbf3f6;
+        linear-gradient(180deg, rgba(var(--primary-rgb), 0.09), rgba(var(--primary-rgb), 0) 440px),
+        var(--surface-bg);
     }
 
     .wrap {
@@ -71,7 +122,7 @@
       top: 0;
       z-index: 40;
       background: rgba(255, 255, 255, 0.92);
-      border-bottom: 1px solid rgba(161, 0, 62, 0.14);
+      border-bottom: 1px solid rgba(var(--primary-rgb), 0.14);
       backdrop-filter: blur(16px);
     }
 
@@ -136,7 +187,7 @@
     .segmented {
       display: inline-grid;
       grid-template-columns: 1fr 1fr;
-      border: 1px solid rgba(161, 0, 62, 0.2);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
       border-radius: 8px;
       background: #fff;
       padding: 3px;
@@ -157,6 +208,52 @@
     .segmented button.active {
       background: var(--blue);
       color: #fff;
+    }
+
+    .theme-switcher {
+      display: inline-grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+      border-radius: 8px;
+      background: #fff;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .theme-option {
+      width: 34px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .theme-option.active {
+      background: rgba(var(--primary-rgb), 0.12);
+      box-shadow: inset 0 0 0 2px var(--blue);
+    }
+
+    .theme-swatch {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      border: 1px solid rgba(29, 29, 27, 0.18);
+      box-shadow: 0 1px 2px rgba(29, 29, 27, 0.16);
+    }
+
+    .theme-swatch-blue {
+      background: linear-gradient(135deg, #123274 0 49%, #fdc300 50% 100%);
+    }
+
+    .theme-swatch-red {
+      background: linear-gradient(135deg, #a1003e 0 62%, #fdc300 63% 100%);
+    }
+
+    .theme-swatch-mosaic {
+      background: conic-gradient(from 45deg, #123274, #00adb9, #fdc300, #a1003e, #123274);
     }
 
     .link-button,
@@ -186,7 +283,7 @@
     .secondary-button {
       background: #fff;
       color: var(--blue);
-      border-color: rgba(161, 0, 62, 0.22);
+      border-color: rgba(var(--primary-rgb), 0.22);
     }
 
     .icon-button {
@@ -194,7 +291,7 @@
       padding: 0;
       background: #fff;
       color: var(--blue);
-      border-color: rgba(161, 0, 62, 0.22);
+      border-color: rgba(var(--primary-rgb), 0.22);
     }
 
     .link-button:hover,
@@ -211,7 +308,7 @@
     .hero {
       color: #fff;
       background:
-        linear-gradient(90deg, rgba(161, 0, 62, 0.97), rgba(123, 0, 48, 0.92)),
+        var(--hero-gradient),
         url("assets/letovo-pattern.png") center / cover no-repeat;
       border-bottom: 6px solid var(--yellow);
     }
@@ -289,7 +386,7 @@
     .search-box input {
       width: 100%;
       min-height: 48px;
-      border: 2px solid rgba(161, 0, 62, 0.18);
+      border: 2px solid rgba(var(--primary-rgb), 0.18);
       border-radius: 8px;
       background: #fff;
       color: var(--ink);
@@ -300,7 +397,7 @@
 
     .search-box input:focus {
       border-color: var(--turquoise);
-      box-shadow: 0 0 0 4px rgba(161, 0, 62, 0.16);
+      box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.16);
     }
 
     .search-symbol {
@@ -322,9 +419,9 @@
     }
 
     .quick-chip {
-      border: 1px solid rgba(161, 0, 62, 0.18);
+      border: 1px solid rgba(var(--primary-rgb), 0.18);
       border-radius: 999px;
-      background: #fff8fb;
+      background: var(--surface-tint);
       color: var(--blue);
       font-size: 12px;
       font-weight: 800;
@@ -335,8 +432,8 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 1px;
-      background: rgba(161, 0, 62, 0.12);
-      border: 1px solid rgba(161, 0, 62, 0.12);
+      background: rgba(var(--primary-rgb), 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.12);
       border-radius: 8px;
       overflow: hidden;
       margin: 18px auto 0;
@@ -376,9 +473,9 @@
       position: sticky;
       top: 84px;
       background: var(--panel);
-      border: 1px solid rgba(161, 0, 62, 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.12);
       border-radius: 8px;
-      box-shadow: 0 12px 28px rgba(161, 0, 62, 0.08);
+      box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.08);
       padding: 14px;
     }
 
@@ -427,7 +524,7 @@
     select {
       width: 100%;
       min-height: 40px;
-      border: 1px solid rgba(161, 0, 62, 0.2);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
       border-radius: 8px;
       background: #fff;
       color: var(--ink);
@@ -437,7 +534,7 @@
 
     select:focus {
       border-color: var(--turquoise);
-      box-shadow: 0 0 0 3px rgba(161, 0, 62, 0.15);
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
     }
 
     .check-list {
@@ -451,9 +548,9 @@
       align-items: center;
       gap: 9px;
       min-height: 34px;
-      border: 1px solid rgba(161, 0, 62, 0.14);
+      border: 1px solid rgba(var(--primary-rgb), 0.14);
       border-radius: 8px;
-      background: #fff8fb;
+      background: var(--surface-tint);
       padding: 7px 8px;
       color: var(--ink);
       font-size: 13px;
@@ -472,7 +569,7 @@
       width: 100%;
       min-height: 40px;
       margin-top: 12px;
-      border: 1px solid rgba(161, 0, 62, 0.2);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
       border-radius: 8px;
       background: #fff;
       color: var(--blue);
@@ -496,7 +593,7 @@
       gap: 12px;
       margin-bottom: 12px;
       background: rgba(255, 255, 255, 0.74);
-      border: 1px solid rgba(161, 0, 62, 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.12);
       border-radius: 8px;
       padding: 10px 12px;
     }
@@ -526,10 +623,10 @@
 
     .profile-card {
       background: #fff;
-      border: 1px solid rgba(161, 0, 62, 0.13);
+      border: 1px solid rgba(var(--primary-rgb), 0.13);
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 14px 30px rgba(161, 0, 62, 0.09);
+      box-shadow: 0 14px 30px rgba(var(--primary-rgb), 0.09);
       display: flex;
       flex-direction: column;
       min-height: 100%;
@@ -542,7 +639,7 @@
       align-items: center;
       padding: 14px;
       background:
-        linear-gradient(135deg, rgba(161, 0, 62, 0.95), rgba(123, 0, 48, 0.95)),
+        var(--card-gradient),
         url("assets/letovo-pattern.png") center / cover no-repeat;
       color: #fff;
     }
@@ -611,7 +708,7 @@
     .fact {
       min-height: 42px;
       border-left: 4px solid var(--turquoise);
-      background: #fff8fb;
+      background: var(--surface-tint);
       border-radius: 6px;
       padding: 8px 10px;
     }
@@ -651,7 +748,7 @@
     }
 
     .tag {
-      border: 1px solid rgba(161, 0, 62, 0.16);
+      border: 1px solid rgba(var(--primary-rgb), 0.16);
       border-radius: 999px;
       background: #fff;
       color: var(--blue);
@@ -681,9 +778,9 @@
 
     .state-card {
       background: #fff;
-      border: 1px solid rgba(161, 0, 62, 0.14);
+      border: 1px solid rgba(var(--primary-rgb), 0.14);
       border-radius: 8px;
-      box-shadow: 0 12px 28px rgba(161, 0, 62, 0.08);
+      box-shadow: 0 12px 28px rgba(var(--primary-rgb), 0.08);
       padding: 22px;
     }
 
@@ -711,8 +808,8 @@
 
     .schema-pill {
       border-radius: 999px;
-      background: #fbf3f6;
-      border: 1px solid rgba(161, 0, 62, 0.14);
+      background: var(--surface-bg);
+      border: 1px solid rgba(var(--primary-rgb), 0.14);
       color: var(--blue);
       font-family: Consolas, "Liberation Mono", monospace;
       font-size: 12px;
@@ -730,7 +827,7 @@
 
     .detail-hero {
       background:
-        linear-gradient(90deg, rgba(161, 0, 62, 0.98), rgba(123, 0, 48, 0.94)),
+        var(--hero-gradient),
         url("assets/letovo-pattern.png") center / cover no-repeat;
       color: #fff;
       border-radius: 8px;
@@ -802,9 +899,9 @@
     .detail-section,
     .detail-aside {
       background: #fff;
-      border: 1px solid rgba(161, 0, 62, 0.12);
+      border: 1px solid rgba(var(--primary-rgb), 0.12);
       border-radius: 8px;
-      box-shadow: 0 12px 26px rgba(161, 0, 62, 0.08);
+      box-shadow: 0 12px 26px rgba(var(--primary-rgb), 0.08);
       padding: 18px;
     }
 
@@ -846,7 +943,7 @@
 
     .side-list li {
       border-left: 4px solid var(--yellow);
-      background: #fff8fb;
+      background: var(--surface-tint);
       border-radius: 6px;
       padding: 9px 10px;
     }
@@ -877,7 +974,7 @@
       display: inline-flex;
       align-items: center;
       min-height: 36px;
-      border: 1px solid rgba(161, 0, 62, 0.16);
+      border: 1px solid rgba(var(--primary-rgb), 0.16);
       border-radius: 8px;
       background: #fff;
       color: var(--blue);
@@ -891,7 +988,7 @@
       width: 100%;
       height: 10px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #f0d7e2, #fff, #f0d7e2);
+      background: linear-gradient(90deg, var(--skeleton-tint), #fff, var(--skeleton-tint));
       background-size: 220% 100%;
       animation: shimmer 1.2s linear infinite;
     }
@@ -1057,6 +1154,17 @@
         <div class="top-actions">
           <a class="secondary-button hidden-link" id="contactLink" href="#" target="_blank" rel="noopener" data-i18n="contact">Контакт</a>
           <a class="primary-button hidden-link" id="formLink" href="#" target="_blank" rel="noopener" data-i18n="submitStory">Добавить историю</a>
+          <div class="theme-switcher" role="group" data-i18n-aria-label="themeSwitcher">
+            <button class="theme-option" type="button" data-theme-option="blue" data-i18n-title="themeBlue" data-i18n-aria-label="themeBlue" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-blue" aria-hidden="true"></span>
+            </button>
+            <button class="theme-option" type="button" data-theme-option="red" data-i18n-title="themeRed" data-i18n-aria-label="themeRed" aria-pressed="true">
+              <span class="theme-swatch theme-swatch-red" aria-hidden="true"></span>
+            </button>
+            <button class="theme-option" type="button" data-theme-option="mosaic" data-i18n-title="themeMosaic" data-i18n-aria-label="themeMosaic" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-mosaic" aria-hidden="true"></span>
+            </button>
+          </div>
           <div class="segmented" aria-label="Language">
             <button type="button" data-lang="ru" class="active">RU</button>
             <button type="button" data-lang="en">EN</button>
@@ -1230,6 +1338,10 @@
         brandSubtitle: "Атлас траекторий выпускников",
         contact: "Контакт",
         submitStory: "Добавить историю",
+        themeSwitcher: "Стиль сайта",
+        themeBlue: "Синий и желтый стиль",
+        themeRed: "Красный стиль выпускников",
+        themeMosaic: "Смешанный стиль Летово",
         eyebrow: "Профили выпускников",
         heroTitle: "Атлас выпускников Летово",
         heroText: "Ищите реальные траектории: университеты, офферы, стипендии, проекты, эссе, привычки и советы выпускников.",
@@ -1306,6 +1418,10 @@
         brandSubtitle: "Alumni pathways explorer",
         contact: "Contact",
         submitStory: "Add story",
+        themeSwitcher: "Site style",
+        themeBlue: "Blue and yellow style",
+        themeRed: "Alumni red style",
+        themeMosaic: "Mixed Letovo style",
         eyebrow: "Alumni profiles",
         heroTitle: "Letovo Alumni Atlas",
         heroText: "Search real pathways: universities, offers, scholarships, projects, essays, habits, and alumni advice.",
@@ -1381,6 +1497,8 @@
     };
 
     const savedLanguage = localStorage.getItem("letovo_atlas_lang");
+    const savedTheme = localStorage.getItem("letovo_atlas_theme");
+    const THEME_OPTIONS = ["blue", "red", "mosaic"];
 
     // Used only while the public Sheet has no usable published rows.
     const DEMO_PROFILES = [
@@ -1428,6 +1546,7 @@
 
     const state = {
       lang: ["ru", "en"].includes(savedLanguage) ? savedLanguage : "ru",
+      theme: THEME_OPTIONS.includes(savedTheme) ? savedTheme : "red",
       profiles: [],
       filtered: [],
       loading: true,
@@ -1454,6 +1573,7 @@
       bindDom();
       configureLinks();
       bindEvents();
+      applyTheme();
       applyLanguage();
       setLoadingState();
       loadProfiles();
@@ -1487,6 +1607,7 @@
       dom.statCountries = document.getElementById("statCountries");
       dom.statScholarships = document.getElementById("statScholarships");
       dom.statMentors = document.getElementById("statMentors");
+      dom.themeOptions = document.querySelectorAll("[data-theme-option]");
     }
 
     function configureLinks() {
@@ -1510,6 +1631,16 @@
           applyLanguage();
           populateFilters();
           render();
+        });
+      });
+
+      dom.themeOptions.forEach((button) => {
+        button.addEventListener("click", () => {
+          const nextTheme = button.dataset.themeOption;
+          if (!THEME_OPTIONS.includes(nextTheme)) return;
+          state.theme = nextTheme;
+          localStorage.setItem("letovo_atlas_theme", state.theme);
+          applyTheme();
         });
       });
 
@@ -1561,6 +1692,15 @@
       return I18N[state.lang][key] || I18N.ru[key] || key;
     }
 
+    function applyTheme() {
+      document.documentElement.dataset.theme = state.theme;
+      dom.themeOptions.forEach((button) => {
+        const active = button.dataset.themeOption === state.theme;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
     function applyLanguage() {
       document.documentElement.lang = state.lang;
       document.querySelectorAll("[data-lang]").forEach((button) => {
@@ -1571,6 +1711,12 @@
       });
       document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
         element.placeholder = t(element.dataset.i18nPlaceholder);
+      });
+      document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+        element.title = t(element.dataset.i18nTitle);
+      });
+      document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+        element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
       });
     }
 

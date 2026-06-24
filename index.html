@@ -9,9 +9,11 @@
     (() => {
       try {
         const savedTheme = localStorage.getItem("letovo_atlas_theme");
-        document.documentElement.dataset.theme = ["blue", "red", "mosaic"].includes(savedTheme) ? savedTheme : "red";
+        const normalizedTheme = savedTheme === "mosaic" ? "turquoise" : savedTheme;
+        document.documentElement.dataset.theme = ["blue", "red", "turquoise"].includes(normalizedTheme) ? normalizedTheme : "blue";
+        if (savedTheme === "mosaic") localStorage.setItem("letovo_atlas_theme", "turquoise");
       } catch (error) {
-        document.documentElement.dataset.theme = "red";
+        document.documentElement.dataset.theme = "blue";
       }
     })();
   </script>
@@ -57,7 +59,7 @@
       --shadow: 0 18px 42px rgba(var(--primary-rgb), 0.12);
     }
 
-    html[data-theme="mosaic"] {
+    html[data-theme="turquoise"] {
       --blue: #007f89;
       --blue-2: #0d3174;
       --yellow: #fdc300;
@@ -69,8 +71,8 @@
       --surface-tint: #f7fbf6;
       --skeleton-tint: #d4f1ee;
       --primary-rgb: 0, 127, 137;
-      --hero-gradient: linear-gradient(115deg, rgba(13, 49, 116, 0.96), rgba(161, 0, 62, 0.9) 56%, rgba(0, 173, 185, 0.82));
-      --card-gradient: linear-gradient(135deg, rgba(13, 49, 116, 0.96), rgba(0, 173, 185, 0.9) 52%, rgba(161, 0, 62, 0.88));
+      --hero-gradient: linear-gradient(105deg, rgba(0, 127, 137, 0.96), rgba(13, 49, 116, 0.94));
+      --card-gradient: linear-gradient(135deg, rgba(0, 127, 137, 0.95), rgba(13, 49, 116, 0.94));
       --shadow: 0 18px 42px rgba(var(--primary-rgb), 0.13);
     }
 
@@ -147,7 +149,7 @@
     }
 
     .brand-logo {
-      width: 112px;
+      width: 148px;
       height: auto;
       display: block;
       flex: 0 0 auto;
@@ -254,8 +256,8 @@
       background: linear-gradient(135deg, #a1003e 0 62%, #fdc300 63% 100%);
     }
 
-    .theme-swatch-mosaic {
-      background: conic-gradient(from 45deg, #123274, #00adb9, #fdc300, #a1003e, #123274);
+    .theme-swatch-turquoise {
+      background: linear-gradient(135deg, #00adb9 0 54%, #0d3174 55% 82%, #fdc300 83% 100%);
     }
 
     .link-button,
@@ -1087,7 +1089,11 @@
 
       .brand-title {
         font-size: 13px;
-        max-width: 128px;
+        max-width: 104px;
+      }
+
+      .brand-logo {
+        width: 132px;
       }
 
       .brand {
@@ -1155,7 +1161,7 @@
     <header class="topbar">
       <div class="wrap topbar-inner">
         <a class="brand" href="#" id="homeLink" aria-label="Letovo Alumni Atlas">
-          <img class="brand-logo" src="assets/letovo-logo-official.svg" alt="Letovo School" />
+          <img class="brand-logo" src="assets/letovo-alumni-logo.svg" alt="Letovo Alumni" />
           <span class="brand-text">
             <span class="brand-title">Alumni Atlas</span>
             <span class="brand-subtitle" data-i18n="brandSubtitle">Атлас траекторий выпускников</span>
@@ -1165,14 +1171,14 @@
           <a class="secondary-button hidden-link" id="contactLink" href="#" target="_blank" rel="noopener" data-i18n="contact">Контакт</a>
           <a class="primary-button hidden-link" id="formLink" href="#" target="_blank" rel="noopener" data-i18n="submitStory">Добавить историю</a>
           <div class="theme-switcher" role="group" data-i18n-aria-label="themeSwitcher">
-            <button class="theme-option" type="button" data-theme-option="blue" data-i18n-title="themeBlue" data-i18n-aria-label="themeBlue" aria-pressed="false">
+            <button class="theme-option active" type="button" data-theme-option="blue" data-i18n-title="themeBlue" data-i18n-aria-label="themeBlue" aria-pressed="true">
               <span class="theme-swatch theme-swatch-blue" aria-hidden="true"></span>
             </button>
-            <button class="theme-option" type="button" data-theme-option="red" data-i18n-title="themeRed" data-i18n-aria-label="themeRed" aria-pressed="true">
+            <button class="theme-option" type="button" data-theme-option="red" data-i18n-title="themeRed" data-i18n-aria-label="themeRed" aria-pressed="false">
               <span class="theme-swatch theme-swatch-red" aria-hidden="true"></span>
             </button>
-            <button class="theme-option" type="button" data-theme-option="mosaic" data-i18n-title="themeMosaic" data-i18n-aria-label="themeMosaic" aria-pressed="false">
-              <span class="theme-swatch theme-swatch-mosaic" aria-hidden="true"></span>
+            <button class="theme-option" type="button" data-theme-option="turquoise" data-i18n-title="themeTurquoise" data-i18n-aria-label="themeTurquoise" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-turquoise" aria-hidden="true"></span>
             </button>
           </div>
           <div class="segmented" aria-label="Language">
@@ -1351,7 +1357,7 @@
         themeSwitcher: "Стиль сайта",
         themeBlue: "Синий и желтый стиль",
         themeRed: "Красный стиль выпускников",
-        themeMosaic: "Смешанный стиль Летово",
+        themeTurquoise: "Бирюзовый стиль Летово",
         eyebrow: "Профили выпускников",
         heroTitle: "Атлас выпускников Летово",
         heroText: "Ищите реальные траектории: университеты, офферы, стипендии, проекты, эссе, привычки и советы выпускников.",
@@ -1431,7 +1437,7 @@
         themeSwitcher: "Site style",
         themeBlue: "Blue and yellow style",
         themeRed: "Alumni red style",
-        themeMosaic: "Mixed Letovo style",
+        themeTurquoise: "Turquoise Letovo style",
         eyebrow: "Alumni profiles",
         heroTitle: "Letovo Alumni Atlas",
         heroText: "Search real pathways: universities, offers, scholarships, projects, essays, habits, and alumni advice.",
@@ -1507,8 +1513,10 @@
     };
 
     const savedLanguage = localStorage.getItem("letovo_atlas_lang");
-    const savedTheme = localStorage.getItem("letovo_atlas_theme");
-    const THEME_OPTIONS = ["blue", "red", "mosaic"];
+    const savedThemeRaw = localStorage.getItem("letovo_atlas_theme");
+    const savedTheme = savedThemeRaw === "mosaic" ? "turquoise" : savedThemeRaw;
+    const THEME_OPTIONS = ["blue", "red", "turquoise"];
+    if (savedThemeRaw === "mosaic") localStorage.setItem("letovo_atlas_theme", "turquoise");
 
     // Used only while the public Sheet has no usable published rows.
     const DEMO_PROFILES = [
@@ -1556,7 +1564,7 @@
 
     const state = {
       lang: ["ru", "en"].includes(savedLanguage) ? savedLanguage : "ru",
-      theme: THEME_OPTIONS.includes(savedTheme) ? savedTheme : "red",
+      theme: THEME_OPTIONS.includes(savedTheme) ? savedTheme : "blue",
       profiles: [],
       filtered: [],
       loading: true,

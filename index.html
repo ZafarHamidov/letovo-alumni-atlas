@@ -124,6 +124,8 @@
       background: rgba(255, 255, 255, 0.92);
       border-bottom: 1px solid rgba(var(--primary-rgb), 0.14);
       backdrop-filter: blur(16px);
+      transition: transform 0.22s ease;
+      will-change: transform;
     }
 
     .topbar-inner {
@@ -1064,6 +1066,14 @@
         width: min(100% - 24px, 1240px);
       }
 
+      .topbar.is-hidden {
+        transform: translateY(-100%);
+      }
+
+      .topbar:focus-within {
+        transform: translateY(0);
+      }
+
       .topbar-inner {
         min-height: auto;
         padding: 8px 0;
@@ -1568,6 +1578,8 @@
     };
 
     const dom = {};
+    let lastHeaderScrollY = 0;
+    let headerScrollTicking = false;
 
     document.addEventListener("DOMContentLoaded", () => {
       bindDom();
@@ -1582,6 +1594,7 @@
     function bindDom() {
       dom.explorerView = document.getElementById("explorerView");
       dom.profileView = document.getElementById("profileView");
+      dom.topbar = document.querySelector(".topbar");
       dom.homeLink = document.getElementById("homeLink");
       dom.searchInput = document.getElementById("searchInput");
       dom.quickChips = document.getElementById("quickChips");
@@ -1680,12 +1693,58 @@
       });
 
       dom.resetFilters.addEventListener("click", resetFilters);
-      dom.openFilters.addEventListener("click", () => dom.filtersPanel.classList.toggle("open"));
-      dom.closeFilters.addEventListener("click", () => dom.filtersPanel.classList.remove("open"));
-      window.addEventListener("hashchange", renderRoute);
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") dom.filtersPanel.classList.remove("open");
+      dom.openFilters.addEventListener("click", () => {
+        dom.filtersPanel.classList.toggle("open");
+        updateMobileHeaderVisibility();
       });
+      dom.closeFilters.addEventListener("click", () => {
+        dom.filtersPanel.classList.remove("open");
+        updateMobileHeaderVisibility();
+      });
+      window.addEventListener("hashchange", renderRoute);
+      window.addEventListener("scroll", queueMobileHeaderUpdate, { passive: true });
+      window.addEventListener("resize", updateMobileHeaderVisibility);
+      updateMobileHeaderVisibility();
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          dom.filtersPanel.classList.remove("open");
+          updateMobileHeaderVisibility();
+        }
+      });
+    }
+
+    function queueMobileHeaderUpdate() {
+      if (headerScrollTicking) return;
+      headerScrollTicking = true;
+      window.requestAnimationFrame(() => {
+        updateMobileHeaderVisibility();
+        headerScrollTicking = false;
+      });
+    }
+
+    function updateMobileHeaderVisibility() {
+      if (!dom.topbar) return;
+      const currentScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const isMobile = window.matchMedia("(max-width: 720px)").matches;
+      const filterIsOpen = dom.filtersPanel && dom.filtersPanel.classList.contains("open");
+      const movedBy = currentScrollY - lastHeaderScrollY;
+
+      if (!isMobile || filterIsOpen || currentScrollY < 24) {
+        dom.topbar.classList.remove("is-hidden");
+        lastHeaderScrollY = currentScrollY;
+        return;
+      }
+
+      if (movedBy > 8 && currentScrollY > 96) {
+        dom.topbar.classList.add("is-hidden");
+        lastHeaderScrollY = currentScrollY;
+        return;
+      }
+
+      if (movedBy < -8) {
+        dom.topbar.classList.remove("is-hidden");
+        lastHeaderScrollY = currentScrollY;
+      }
     }
 
     function t(key) {
